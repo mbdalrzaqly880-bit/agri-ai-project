@@ -1,0 +1,89 @@
+<!--
+  ==========================================================================
+  ملف admin/dashboard.html - الصفحة الرئيسية للوحة التحكم
+  ==========================================================================
+  هذي الصفحة خاصة بيك بس (الأدمن) - فيها نظرة سريعة على أرقام الموقع:
+  كم عدد المستخدمين، كم عملية تشخيص صارت، وآخر العمليات
+  ==========================================================================
+-->
+{% extends "base.html" %}
+
+{% block title %}لوحة التحكم | منصة الاستشارات الزراعية الذكية{% endblock %}
+
+{% block content %}
+
+<section class="admin-section">
+
+    <div class="admin-header">
+        <h2 class="section-title">لوحة التحكم</h2>
+        <a href="{{ url_for('admin_users') }}" class="btn btn-secondary"
+           style="border-color: var(--color-leaf); color: var(--color-leaf);">
+            عرض كل المستخدمين
+        </a>
+    </div>
+
+    <!-- ===================== بطاقات الإحصائيات السريعة ===================== -->
+    <div class="stats-grid">
+
+        <div class="stat-card">
+            <span class="stat-number">{{ total_users }}</span>
+            <span class="stat-label">إجمالي المستخدمين</span>
+        </div>
+
+        <div class="stat-card">
+            <span class="stat-number">{{ total_diagnoses }}</span>
+            <span class="stat-label">إجمالي عمليات التشخيص</span>
+        </div>
+
+    </div>
+
+    <!-- ===================== جدول آخر عمليات التشخيص ===================== -->
+    <h3 class="admin-subtitle">آخر عمليات التشخيص</h3>
+
+    <!--
+      أمر "if recent_diagnoses" يتحقق: هل فيه سجلات أصلاً؟
+      لو القائمة فاضية (ولا حد سوى تشخيص بعد)، نعرض رسالة بديلة بدل جدول فاضي
+    -->
+    {% if recent_diagnoses %}
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>نوع الفاكهة</th>
+                <th>الحالة الصحية</th>
+                <th>نسبة الثقة</th>
+                <th>المستخدم</th>
+                <th>التاريخ</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!--
+              أمر "for" يكرر هذا السطر (tr) لكل عنصر داخل recent_diagnoses
+              "d" هو اسم مؤقت نعطيه لكل عنصر أثناء المرور عليه بالتكرار
+            -->
+            {% for d in recent_diagnoses %}
+            <tr>
+                <td>{{ d.fruit_type }}</td>
+                <!--
+                  d.disease_name يكون فارغ (None) لو الثمرة سليمة، لذلك نتحقق
+                  أول: لو فيه اسم مرض نعرضه، وإلا نعرض "سليمة" كنص بديل
+                -->
+                <td>{{ d.disease_name if d.disease_name else 'سليمة' }}</td>
+                <td>{{ d.confidence }}%</td>
+                <!--
+                  d.user يوصلنا مباشرة لبيانات المستخدم المرتبط بهذا السجل
+                  بفضل الـ relationship اللي عرّفناها بملف models.py
+                  (backref='user') - بدون ما نحتاج نسوي بحث إضافي بأنفسنا
+                -->
+                <td>{{ d.user.full_name }}</td>
+                <td>{{ d.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="empty-state">لا توجد عمليات تشخيص بعد</p>
+    {% endif %}
+
+</section>
+
+{% endblock %}

@@ -1,0 +1,54 @@
+<!--
+  ==========================================================================
+  ملف admin/users.html - قائمة كل المستخدمين المسجلين بالموقع
+  ==========================================================================
+-->
+{% extends "base.html" %}
+
+{% block title %}المستخدمون | لوحة التحكم{% endblock %}
+
+{% block content %}
+
+<section class="admin-section">
+
+    <div class="admin-header">
+        <h2 class="section-title">كل المستخدمين</h2>
+        <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary"
+           style="border-color: var(--color-leaf); color: var(--color-leaf);">
+            الرجوع للوحة التحكم
+        </a>
+    </div>
+
+    {% if all_users %}
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>الاسم الكامل</th>
+                <th>البريد الإلكتروني</th>
+                <th>تاريخ التسجيل</th>
+                <th>عدد عمليات التشخيص</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for u in all_users %}
+            <tr>
+                <td>{{ u.full_name }}</td>
+                <td>{{ u.email }}</td>
+                <td>{{ u.created_at.strftime('%Y-%m-%d') }}</td>
+                <!--
+                  u.diagnoses يرجع قائمة كل عمليات التشخيص المرتبطة بهذا
+                  المستخدم (بفضل الـ relationship بملف models.py)
+                  |length هو "فلتر" بلغة Jinja2 يحسب عدد عناصر القائمة
+                -->
+                <td>{{ u.diagnoses|length }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="empty-state">لا يوجد مستخدمون مسجلون بعد</p>
+    {% endif %}
+
+</section>
+
+{% endblock %}
