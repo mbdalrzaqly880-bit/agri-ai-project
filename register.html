@@ -1,0 +1,61 @@
+<!--
+  ==========================================================================
+  ملف register.html - صفحة إنشاء حساب جديد
+  ==========================================================================
+-->
+{% extends "base.html" %}
+
+{% block title %}إنشاء حساب | منصة الاستشارات الزراعية الذكية{% endblock %}
+
+{% block content %}
+
+<section class="auth-section">
+    <div class="auth-card">
+
+        <h2 class="section-title">إنشاء حساب جديد</h2>
+
+        <!--
+          ===================== عرض رسائل الخطأ =====================
+          error هو متغير نرسله من app.py لو صار خطأ (مثلاً: الإيميل مسجل قبل)
+          أمر "if error" يعرض الرسالة بس لو فيه خطأ فعلي، وإلا ما يظهر شي
+        -->
+        {% if error %}
+        <div class="alert-error">{{ error }}</div>
+        {% endif %}
+
+        <!-- نموذج التسجيل - method="POST" لأننا نرسل بيانات حساسة (كلمة مرور) -->
+        <form action="{{ url_for('register') }}" method="POST" class="auth-form">
+
+            <div class="form-group">
+                <label for="full_name">الاسم الكامل</label>
+                <!-- required تمنع إرسال النموذج لو الحقل فاضي (فحص أولي بسيط بالمتصفح) -->
+                <input type="text" id="full_name" name="full_name" required
+                       placeholder="مثال: أحمد محمد">
+            </div>
+
+            <div class="form-group">
+                <label for="email">البريد الإلكتروني</label>
+                <!-- type="email" يخلي المتصفح يتحقق تلقائياً إن الصيغة إيميل صحيح -->
+                <input type="email" id="email" name="email" required
+                       placeholder="example@email.com">
+            </div>
+
+            <div class="form-group">
+                <label for="password">كلمة المرور</label>
+                <!-- type="password" يخلي الكتابة تظهر كنقاط بدل نص واضح -->
+                <input type="password" id="password" name="password" required
+                       minlength="6" placeholder="6 أحرف على الأقل">
+            </div>
+
+            <button type="submit" class="btn btn-primary submit-btn">إنشاء الحساب</button>
+
+        </form>
+
+        <p class="auth-switch">
+            عندك حساب مسبقاً؟ <a href="{{ url_for('login') }}">سجّل دخولك من هنا</a>
+        </p>
+
+    </div>
+</section>
+
+{% endblock %}

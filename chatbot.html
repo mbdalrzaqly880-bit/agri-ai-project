@@ -1,0 +1,69 @@
+<!--
+  ==========================================================================
+  ملف chatbot.html - صفحة الاستشارات الزراعية (الشات بوت)
+  ==========================================================================
+  هذي الصفحة تعرض محادثة بين المستخدم والذكاء الاصطناعي (Gemini)
+  chat_history قائمة فيها كل الرسائل السابقة، كل رسالة فيها role (مين
+  المتحدث: user أو model) و text (نص الرسالة نفسها)
+  ==========================================================================
+-->
+{% extends "base.html" %}
+
+{% block title %}استشارات زراعية | منصة الاستشارات الزراعية الذكية{% endblock %}
+
+{% block content %}
+
+<section class="chat-section">
+
+    <div class="chat-header">
+        <h2 class="section-title">استشر الخبير الزراعي</h2>
+        <a href="{{ url_for('clear_chat') }}" class="clear-chat-link">محادثة جديدة</a>
+    </div>
+
+    <!-- ===================== صندوق المحادثة ===================== -->
+    <div class="chat-box" id="chatBox">
+
+        <!-- لو ما فيه أي رسائل بعد، نعرض رسالة ترحيب افتراضية -->
+        {% if not chat_history %}
+        <div class="chat-bubble bot-bubble">
+            أهلاً بك! أنا مساعدك الزراعي. اسألني عن أي شيء يخص النباتات،
+            الأمراض، أو طرق الزراعة وسأساعدك فوراً.
+        </div>
+        {% endif %}
+
+        <!--
+          نمرّ على كل رسالة بسجل المحادثة ونعرضها كـ "فقاعة" (bubble)
+          نستخدم أمر "if" جوّه الحلقة عشان نحدد شكل الفقاعة حسب المتحدث:
+          لون مختلف لرسالة المستخدم عن رسالة الذكاء الاصطناعي
+        -->
+        {% for msg in chat_history %}
+            {% if msg.role == 'user' %}
+            <div class="chat-bubble user-bubble">{{ msg.text }}</div>
+            {% else %}
+            <div class="chat-bubble bot-bubble">{{ msg.text }}</div>
+            {% endif %}
+        {% endfor %}
+
+    </div>
+
+    <!-- ===================== نموذج إرسال سؤال جديد ===================== -->
+    <form action="{{ url_for('chatbot') }}" method="POST" class="chat-form">
+        <input type="text" name="message" placeholder="اكتب سؤالك هنا..."
+               required autocomplete="off" class="chat-input">
+        <button type="submit" class="btn btn-primary chat-send-btn">إرسال</button>
+    </form>
+
+</section>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+// ==============================================================================
+// كود بسيط يخلي صندوق المحادثة "ينزل" تلقائياً لآخر رسالة عند تحميل الصفحة
+// عشان المستخدم يشوف آخر رد مباشرة، بدون ما يحتاج يمرر (scroll) يدوياً
+// ==============================================================================
+const chatBox = document.getElementById('chatBox');
+chatBox.scrollTop = chatBox.scrollHeight;
+</script>
+{% endblock %}

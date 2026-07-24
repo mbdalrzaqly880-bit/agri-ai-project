@@ -1,0 +1,168 @@
+<!--
+  ==========================================================================
+  ملف diagnose.html - صفحة تشخيص النبات (قلب المشروع)
+  ==========================================================================
+  هذي الصفحة فيها نموذج (Form) يرفع فيه المزارع صورة، والسيرفر يرجع له
+  نتيجة التشخيص. حالياً النتيجة "وهمية" (placeholder) لأن الموديل الحقيقي
+  لسا ما دربناه - بس الشكل والتصميم جاهز، وبعدين بس نبدّل النتيجة الوهمية
+  بنتيجة حقيقية من الموديل بدون ما نغيّر تصميم الصفحة
+  ==========================================================================
+-->
+{% extends "base.html" %}
+
+{% block title %}تشخيص النبات | منصة الاستشارات الزراعية الذكية{% endblock %}
+
+{% block content %}
+
+<section class="diagnose-section">
+
+    <h2 class="section-title">شخّص نبتتك الآن</h2>
+    <p class="diagnose-subtitle">
+        ارفع صورة واضحة للورقة أو الثمرة المصابة، وسيقوم الذكاء الاصطناعي بتحليلها فوراً
+    </p>
+
+    <div class="diagnose-wrapper">
+
+        <!--
+          ===================== نموذج رفع الصورة =====================
+          نقاط مهمة بالنموذج (form):
+          - method="POST": نرسل البيانات (الصورة) للسيرفر بطريقة POST
+            (مو GET) لأن GET غير مناسب لإرسال ملفات وبيانات كبيرة
+          - enctype="multipart/form-data": هذا **ضروري جداً** لأي نموذج
+            يحتوي رفع ملفات (صور، PDF...) - بدونه الصورة ما توصل للسيرفر
+          - action يحدد الرابط اللي يستقبل البيانات (نفس صفحة diagnose)
+        -->
+        <form action="{{ url_for('diagnose') }}" method="POST"
+              enctype="multipart/form-data" class="upload-form">
+
+            <!-- صندوق رفع الصورة مع معاينة -->
+            <div class="upload-box" id="uploadBox">
+
+                <!-- هذا العنصر يظهر قبل ما يختار المستخدم صورة -->
+                <div class="upload-placeholder" id="uploadPlaceholder">
+                    <span class="upload-icon">📷</span>
+                    <p>اضغط هنا لاختيار صورة، أو اسحبها وأفلتها</p>
+                </div>
+
+                <!-- هذا العنصر يظهر معاينة الصورة بعد ما يختارها المستخدم -->
+                <img id="imagePreview" class="image-preview" style="display: none;">
+
+                <!--
+                  input من نوع file هو اللي يفتح نافذة اختيار الملفات
+                  accept="image/*" يخلي المتصفح يعرض بس ملفات الصور، يسهّل
+                  على المستخدم ويقلل احتمال رفع نوع ملف خطأ
+                  name="plant_image" هذا الاسم اللي بنستخدمه بالسيرفر
+                  (app.py) عشان نقرأ الملف المرفوع
+                -->
+                <input type="file" name="plant_image" id="plantImageInput"
+                       accept="image/*" required class="file-input">
+            </div>
+
+            <!-- زر الإرسال -->
+            <button type="submit" class="btn btn-primary submit-btn">
+                افحص الصورة الآن
+            </button>
+
+        </form>
+
+        <!--
+          ===================== قسم عرض النتيجة =====================
+          أمر "if result" معناها: "اعرض هذا القسم بس لو متغير result
+          موجود وممرر من app.py" - يعني أول ما تفتح الصفحة (قبل ما ترفع
+          أي صورة) القسم هذا ما يظهر أبداً، ويظهر بس بعد ما يرسل المستخدم
+          النموذج ويرجع السيرفر بنتيجة
+        -->
+        {% if result %}
+        <div class="result-card">
+            <h3>نتيجة التحليل</h3>
+
+            <!-- الحقل الأول: نوع الفاكهة المكتشفة -->
+            <div class="result-row">
+                <span class="result-label">نوع الفاكهة:</span>
+                <span class="result-value">{{ result.fruit_type }}</span>
+            </div>
+
+            <!-- الحقل الثاني: حالة النضج -->
+            <div class="result-row">
+                <span class="result-label">حالة النضج:</span>
+                <span class="result-value">{{ result.ripeness }}</span>
+            </div>
+
+            <!-- الحقل الثالث: الحالة الصحية -->
+            <!--
+              أمر "if result.is_healthy" يتحقق: هل الثمرة سليمة؟
+              لو سليمة، نعرض شارة خضراء "سليمة" بدون تفاصيل علاج
+              لو مصابة، نعرض اسم المرض ونسبة الثقة وقسم العلاج
+            -->
+            <div class="result-row">
+                <span class="result-label">الحالة الصحية:</span>
+                {% if result.is_healthy %}
+                    <span class="result-value health-good">سليمة ✓</span>
+                {% else %}
+                    <span class="result-value disease-name">{{ result.disease_name }}</span>
+                {% endif %}
+            </div>
+
+            {% if not result.is_healthy %}
+            <div class="result-row">
+                <span class="result-label">نسبة الثقة:</span>
+                <span class="result-value">{{ result.confidence }}%</span>
+            </div>
+
+            <div class="result-treatment">
+                <h4>العلاج المقترح:</h4>
+                <p>{{ result.treatment }}</p>
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+
+    </div>
+
+</section>
+
+{% endblock %}
+
+<!--
+  ===================== JavaScript خاص بهذي الصفحة فقط =====================
+  نستخدم بلوك scripts (المعرّف في base.html) عشان نضيف كود جافاسكربت
+  بس لهذي الصفحة، بدون ما يتحمّل في باقي صفحات الموقع (يوفر بيانات
+  للمستخدمين اللي نتهم ضعيف)
+-->
+{% block scripts %}
+<script>
+// ==============================================================================
+// كود معاينة الصورة قبل الإرسال
+// ==============================================================================
+// الفكرة: لما المستخدم يختار صورة من جهازه، نبيها تظهر له فوراً كمعاينة
+// قبل ما يضغط "إرسال" - بدون ما نحتاج نرسلها للسيرفر بعد (كله محلي بالمتصفح)
+
+// نمسك العناصر اللي نحتاج نتعامل معها من الصفحة عن طريق الـ id
+const plantImageInput = document.getElementById('plantImageInput');
+const imagePreview = document.getElementById('imagePreview');
+const uploadPlaceholder = document.getElementById('uploadPlaceholder');
+
+// 'change' معناها: نفّذ هذا الكود كل ما المستخدم يختار ملف جديد
+plantImageInput.addEventListener('change', function (event) {
+
+    // نجيب أول ملف تم اختياره (لو المستخدم اختار أكثر من صورة، ناخذ الأولى بس)
+    const file = event.target.files[0];
+
+    // لو المستخدم فعلاً اختار ملف (ما ألغى الاختيار)
+    if (file) {
+        // FileReader أداة مدمجة بالمتصفح تقرأ محتوى الملف
+        const reader = new FileReader();
+
+        // لما تخلص القراءة، نحط نتيجتها كمصدر (src) لعنصر الصورة
+        reader.onload = function (e) {
+            imagePreview.src = e.target.result;
+            imagePreview.style.display = 'block'; // نظهر الصورة
+            uploadPlaceholder.style.display = 'none'; // نخفي أيقونة الرفع الافتراضية
+        };
+
+        // نبدأ القراءة، وتحويل الصورة لصيغة تقدر المتصفح يعرضها مباشرة
+        reader.readAsDataURL(file);
+    }
+});
+</script>
+{% endblock %}
