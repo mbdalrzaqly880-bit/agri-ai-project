@@ -1,0 +1,872 @@
+/* ==========================================================================
+   ملف التصميم العام لموقع "منصة الاستشارات الزراعية الذكية"
+   هذا الملف فيه كل الألوان والخطوط والأنماط المشتركة بين كل صفحات الموقع
+   بهذي الطريقة، لو غيّرت لون هنا، بيتغير في كل الموقع تلقائياً (مو لازم تكرر الكود)
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1) استيراد الخطوط العربية من Google Fonts
+   Cairo: نستخدمه للعناوين الكبيرة (خط عريض وقوي يعطي وضوح وثقة)
+   Almarai: نستخدمه للنصوص العادية (مريح للقراءة على الشاشة)
+   -------------------------------------------------------------------------- */
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@600;700;800&family=Almarai:wght@400;700&display=swap');
+
+/* --------------------------------------------------------------------------
+   2) متغيرات التصميم (Design Tokens)
+   بدل ما نكتب كود اللون "#3F5C2E" في كل مكان بالملف،
+   نعرّفه مرة وحدة هنا باسم متغير --color-leaf ونستخدم الاسم بس
+   هذا يسهّل الصيانة ويخلي الكود منظم أكثر
+   -------------------------------------------------------------------------- */
+:root {
+  /* الألوان الأساسية - مستوحاة من بيئة الزراعة (ورق النبات، القمح، التربة) */
+  --color-bg: #F2ECD8;        /* لون الخلفية: بيج فاتح شبيه بالورق */
+  --color-ink: #232A1D;       /* لون النص الأساسي: أخضر غامق قريب من الأسود */
+  --color-leaf: #3F5C2E;      /* اللون الأساسي للموقع: أخضر ورقي غامق */
+  --color-leaf-light: #7C9A46;/* أخضر فاتح: يستخدم للنجاح/الصحة (نبات سليم) */
+  --color-clay: #A8542E;      /* لون طيني (تراكوتا): يستخدم للتحذير/المرض */
+  --color-gold: #C9A227;      /* أصفر قمحي: يستخدم لأزرار العمل الرئيسية */
+  --color-white: #FDFBF5;     /* أبيض دافئ (مو أبيض ناصع) للبطاقات */
+
+  /* الخطوط */
+  --font-display: 'Cairo', sans-serif;   /* خط العناوين */
+  --font-body: 'Almarai', sans-serif;    /* خط النصوص */
+
+  /* الظلال والانحناءات - نعرفها مرة وحدة عشان تكون موحدة بكل الموقع */
+  --shadow-soft: 0 4px 20px rgba(35, 42, 29, 0.08);
+  --radius-md: 12px;
+}
+
+/* --------------------------------------------------------------------------
+   3) إعادة ضبط أساسية (Reset)
+   المتصفحات المختلفة تعطي هوامش افتراضية مختلفة للعناصر
+   هذا الجزء يصفّرها عشان نبدأ من نقطة موحدة ونتحكم فيها احنا
+   -------------------------------------------------------------------------- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box; /* يخلي حساب العرض/الطول يشمل الحواف والـ padding */
+}
+
+/* --------------------------------------------------------------------------
+   4) تنسيق الصفحة بشكل عام
+   -------------------------------------------------------------------------- */
+html {
+  direction: rtl; /* مهم جداً: يخلي اتجاه الصفحة من اليمين لليسار (لغة عربية) */
+  scroll-behavior: smooth; /* تمرير ناعم لما نضغط على رابط داخلي بالصفحة */
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--color-bg);
+  color: var(--color-ink);
+  line-height: 1.7; /* مسافة بين الأسطر - يسهل القراءة */
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column; /* عشان الفوتر يثبت تحت حتى لو المحتوى قليل */
+}
+
+/* العناوين تستخدم خط Cairo دايماً */
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  color: var(--color-leaf);
+  font-weight: 700;
+}
+
+a {
+  text-decoration: none; /* نشيل الخط تحت الروابط الافتراضي */
+  color: inherit;
+}
+
+/* --------------------------------------------------------------------------
+   5) شريط التنقل العلوي (Navbar)
+   -------------------------------------------------------------------------- */
+.navbar {
+  background-color: var(--color-leaf);
+  padding: 18px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky; /* يبقى ثابت فوق الصفحة حتى لو نزلنا تحت */
+  top: 0;
+  z-index: 100;
+  box-shadow: var(--shadow-soft);
+}
+
+.navbar .logo {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--color-white);
+}
+
+.navbar .logo span {
+  color: var(--color-gold); /* نلوّن جزء من اسم الموقع بالذهبي لإبراز الهوية */
+}
+
+.navbar ul {
+  list-style: none; /* نشيل النقاط الافتراضية من القائمة */
+  display: flex;
+  gap: 32px;
+}
+
+.navbar ul li a {
+  color: var(--color-white);
+  font-weight: 700;
+  font-size: 15px;
+  position: relative;
+  padding-bottom: 4px;
+  transition: color 0.2s ease;
+}
+
+/* خط ذهبي يظهر تحت الرابط عند المرور عليه بالماوس - يعطي إحساس تفاعل بسيط بدون تعقيد */
+.navbar ul li a::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 0;
+  height: 2px;
+  background-color: var(--color-gold);
+  transition: width 0.25s ease;
+}
+
+.navbar ul li a:hover::after {
+  width: 100%;
+}
+
+/* --------------------------------------------------------------------------
+   6) الأزرار العامة (Buttons)
+   -------------------------------------------------------------------------- */
+.btn {
+  display: inline-block;
+  padding: 14px 32px;
+  border-radius: var(--radius-md);
+  font-weight: 700;
+  font-family: var(--font-body);
+  font-size: 15px;
+  cursor: pointer;
+  border: none;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.btn:hover {
+  transform: translateY(-2px); /* يرتفع الزر شوي عند المرور عليه - تفاعل بسيط وواضح */
+  box-shadow: var(--shadow-soft);
+}
+
+/* الزر الأساسي (ذهبي) - يستخدم لأهم إجراء بالصفحة، مثل "افحص نبتتك الآن" */
+.btn-primary {
+  background-color: var(--color-gold);
+  color: var(--color-ink);
+}
+
+/* زر ثانوي (شفاف بحدود) - يستخدم لإجراء أقل أهمية */
+.btn-secondary {
+  background-color: transparent;
+  border: 2px solid var(--color-white);
+  color: var(--color-white);
+}
+
+/* --------------------------------------------------------------------------
+   7) قسم الترحيب الرئيسي (Hero Section) في الصفحة الرئيسية
+   -------------------------------------------------------------------------- */
+.hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 80px 60px;
+  gap: 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.hero-text {
+  flex: 1;
+}
+
+.hero-text h1 {
+  font-size: 44px;
+  line-height: 1.3;
+  margin-bottom: 20px;
+}
+
+.hero-text h1 .highlight {
+  color: var(--color-gold); /* نبرز الكلمة الأهم بالعنوان بلون مختلف */
+}
+
+.hero-text p {
+  font-size: 18px;
+  color: var(--color-ink);
+  opacity: 0.85;
+  margin-bottom: 32px;
+  max-width: 480px;
+}
+
+.hero-buttons {
+  display: flex;
+  gap: 16px;
+}
+
+.hero-buttons .btn-secondary {
+  border-color: var(--color-leaf);
+  color: var(--color-leaf);
+}
+
+/* --------------------------------------------------------------------------
+   8) العنصر المميز للتصميم: ورقة نبات مع "خط مسح ضوئي" متحرك
+   هذا هو العنصر البصري الذي يرمز لفكرة المشروع: الذكاء الاصطناعي يفحص الصورة
+   -------------------------------------------------------------------------- */
+.scan-container {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  position: relative;
+}
+
+.leaf-wrapper {
+  position: relative;
+  width: 280px;
+  height: 280px;
+  background-color: var(--color-white);
+  border-radius: 50% 50% 45% 45% / 55% 55% 45% 45%; /* شكل يشبه الورقة */
+  box-shadow: var(--shadow-soft);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.leaf-wrapper svg {
+  width: 65%;
+  height: 65%;
+}
+
+/* خط المسح الضوئي: شريط ذهبي رفيع يتحرك من فوق لتحت باستمرار */
+.scan-line {
+  position: absolute;
+  right: 0;
+  left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--color-gold), transparent);
+  animation: scan-move 2.8s ease-in-out infinite;
+  box-shadow: 0 0 12px 2px rgba(201, 162, 39, 0.6);
+}
+
+/* الحركة نفسها: تحدد موقع الخط في بداية ونهاية كل دورة */
+@keyframes scan-move {
+  0%   { top: 8%; }
+  50%  { top: 88%; }
+  100% { top: 8%; }
+}
+
+/* نقاط صغيرة تنبض حول الورقة - ترمز لنقاط اكتشاف الذكاء الاصطناعي */
+.detect-dot {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: var(--color-clay);
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { transform: scale(1); opacity: 0.7; }
+  50%      { transform: scale(1.4); opacity: 1; }
+}
+
+/* احترام إعداد "تقليل الحركة" في المتصفح - مهم لمن يعانون من الحساسية للحركة */
+@media (prefers-reduced-motion: reduce) {
+  .scan-line, .detect-dot {
+    animation: none;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   9) قسم "كيف تعمل المنصة" - خطوات مرقّمة
+   هنا الترقيم منطقي فعلاً لأنه يمثل تسلسل حقيقي (خطوة 1، 2، 3)
+   -------------------------------------------------------------------------- */
+.how-it-works {
+  background-color: var(--color-white);
+  padding: 70px 40px;
+}
+
+.section-title {
+  text-align: center;
+  font-size: 32px;
+  margin-bottom: 50px;
+}
+
+.steps {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  max-width: 1100px;
+  margin: 0 auto;
+  flex-wrap: wrap;
+}
+
+.step-card {
+  background-color: var(--color-bg);
+  border-radius: var(--radius-md);
+  padding: 32px 24px;
+  width: 280px;
+  text-align: center;
+  position: relative;
+}
+
+.step-number {
+  font-family: var(--font-display);
+  font-size: 42px;
+  font-weight: 800;
+  color: var(--color-leaf-light);
+  opacity: 0.4;
+  margin-bottom: 8px;
+}
+
+.step-card h3 {
+  font-size: 19px;
+  margin-bottom: 10px;
+}
+
+.step-card p {
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+/* --------------------------------------------------------------------------
+   10) الفوتر (تذييل الصفحة)
+   -------------------------------------------------------------------------- */
+.footer {
+  background-color: var(--color-ink);
+  color: var(--color-white);
+  text-align: center;
+  padding: 24px;
+  margin-top: auto; /* يخلي الفوتر يلتصق بأسفل الصفحة دائماً */
+  font-size: 14px;
+  opacity: 0.85;
+}
+
+/* --------------------------------------------------------------------------
+   11) التجاوب مع الشاشات الصغيرة (Responsive) - مهم جداً لأن أغلب المستخدمين
+   في اليمن بيدخلون من الجوال، فلازم الموقع يبان صح على شاشة صغيرة
+   -------------------------------------------------------------------------- */
+/* ==========================================================================
+   12) صفحة تشخيص النبات (diagnose.html)
+   ========================================================================== */
+.diagnose-section {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.diagnose-subtitle {
+  opacity: 0.8;
+  margin-bottom: 40px;
+}
+
+.diagnose-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+
+/* صندوق رفع الصورة */
+.upload-box {
+  position: relative;
+  width: 100%;
+  min-height: 260px;
+  background-color: var(--color-white);
+  border: 2px dashed var(--color-leaf-light);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+}
+
+.upload-box:hover {
+  border-color: var(--color-gold);
+}
+
+.upload-placeholder {
+  text-align: center;
+  color: var(--color-leaf);
+  opacity: 0.7;
+  padding: 20px;
+}
+
+.upload-icon {
+  font-size: 40px;
+  display: block;
+  margin-bottom: 10px;
+}
+
+/* معاينة الصورة المرفوعة */
+.image-preview {
+  width: 100%;
+  height: 100%;
+  max-height: 320px;
+  object-fit: contain; /* تحافظ على أبعاد الصورة الأصلية بدون تشويه */
+}
+
+/* input الملف نجعله يغطي الصندوق كامل لكن شفاف تماماً
+   عشان أي ضغطة على الصندوق تفتح نافذة اختيار الملفات */
+.file-input {
+  position: absolute;
+  inset: 0; /* يمدد العنصر ليغطي كل جوانب الأب (فوق/تحت/يمين/يسار = 0) */
+  opacity: 0;
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+}
+
+.submit-btn {
+  width: 100%;
+  max-width: 300px;
+}
+
+/* بطاقة عرض نتيجة التشخيص */
+.result-card {
+  width: 100%;
+  background-color: var(--color-white);
+  border-radius: var(--radius-md);
+  padding: 30px;
+  text-align: right;
+  box-shadow: var(--shadow-soft);
+  border-right: 5px solid var(--color-gold);
+}
+
+.result-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(35, 42, 29, 0.08);
+}
+
+.result-label {
+  font-weight: 700;
+  color: var(--color-leaf);
+}
+
+.result-value.disease-name {
+  color: var(--color-clay);
+  font-weight: 700;
+}
+
+/* شارة "سليمة" باللون الأخضر - عكس لون المرض تماماً، تفريق بصري سريع */
+.result-value.health-good {
+  color: var(--color-leaf-light);
+  font-weight: 700;
+}
+
+.result-treatment {
+  margin-top: 20px;
+  background-color: var(--color-bg);
+  padding: 16px;
+  border-radius: var(--radius-md);
+}
+
+.result-treatment h4 {
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+
+/* ==========================================================================
+   13) صفحات تسجيل الدخول والتسجيل (auth)
+   ========================================================================== */
+.auth-section {
+  display: flex;
+  justify-content: center;
+  padding: 60px 20px;
+}
+
+.auth-card {
+  background-color: var(--color-white);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-soft);
+  padding: 40px;
+  width: 100%;
+  max-width: 420px;
+  text-align: center;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  text-align: right;
+  margin-top: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-group label {
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--color-leaf);
+}
+
+.form-group input {
+  padding: 12px 14px;
+  border: 1px solid rgba(35, 42, 29, 0.2);
+  border-radius: 8px;
+  font-family: var(--font-body);
+  font-size: 15px;
+  background-color: var(--color-bg);
+}
+
+/* عند التركيز على الحقل (المستخدم يكتب فيه) نبرز الحدود بلون العلامة */
+.form-group input:focus {
+  outline: none;
+  border-color: var(--color-leaf-light);
+}
+
+.auth-switch {
+  margin-top: 20px;
+  font-size: 14px;
+}
+
+.auth-switch a {
+  color: var(--color-gold);
+  font-weight: 700;
+}
+
+/* صندوق رسالة الخطأ (مثلاً: كلمة مرور غلط، إيميل مسجل مسبقاً) */
+.alert-error {
+  background-color: rgba(168, 84, 46, 0.12);
+  color: var(--color-clay);
+  border-right: 4px solid var(--color-clay);
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  margin-bottom: 10px;
+  text-align: right;
+}
+
+/* ==========================================================================
+   14) لوحة التحكم (admin dashboard)
+   ========================================================================== */
+.admin-section {
+  max-width: 950px;
+  margin: 0 auto;
+  padding: 60px 20px;
+}
+
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.admin-header .section-title {
+  margin-bottom: 0;
+}
+
+/* بطاقات الإحصائيات (عدد المستخدمين، عدد عمليات التشخيص) */
+.stats-grid {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 40px;
+  flex-wrap: wrap;
+}
+
+.stat-card {
+  background-color: var(--color-leaf);
+  color: var(--color-white);
+  border-radius: var(--radius-md);
+  padding: 28px;
+  flex: 1;
+  min-width: 200px;
+  text-align: center;
+  box-shadow: var(--shadow-soft);
+}
+
+.stat-number {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 40px;
+  font-weight: 800;
+  color: var(--color-gold);
+}
+
+.stat-label {
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+.admin-subtitle {
+  font-size: 20px;
+  margin-bottom: 16px;
+}
+
+/* جدول عرض البيانات (المستخدمين / عمليات التشخيص) */
+.admin-table {
+  width: 100%;
+  border-collapse: collapse; /* يشيل المسافات الفارغة الافتراضية بين خلايا الجدول */
+  background-color: var(--color-white);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-soft);
+}
+
+.admin-table th,
+.admin-table td {
+  padding: 14px 18px;
+  text-align: right;
+  font-size: 14px;
+}
+
+.admin-table thead {
+  background-color: var(--color-leaf);
+  color: var(--color-white);
+}
+
+/* لون متبادل للصفوف (خط فاتح/غامق شوي) يسهّل قراءة الجدول لصفوف كثيرة */
+.admin-table tbody tr:nth-child(even) {
+  background-color: var(--color-bg);
+}
+
+.empty-state {
+  text-align: center;
+  opacity: 0.6;
+  padding: 30px;
+}
+
+/* ==========================================================================
+   15) صفحة الاستشارات / الشات بوت (chatbot.html)
+   ========================================================================== */
+.chat-section {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 50px 20px;
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 140px); /* نطرح ارتفاع النافبار والفوتر تقريباً */
+}
+
+.chat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.chat-header .section-title {
+  margin-bottom: 0;
+  font-size: 24px;
+}
+
+.clear-chat-link {
+  font-size: 14px;
+  color: var(--color-clay);
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+/* صندوق المحادثة نفسه - نخليه يتمدد وياخذ المساحة المتاحة، وفيه scroll */
+.chat-box {
+  flex: 1;
+  overflow-y: auto; /* يظهر شريط تمرير لو المحادثة طويلة */
+  background-color: var(--color-white);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-shadow: var(--shadow-soft);
+  margin-bottom: 16px;
+}
+
+/* فقاعة الرسالة العامة */
+.chat-bubble {
+  max-width: 75%;
+  padding: 12px 16px;
+  border-radius: 14px;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+/* فقاعة المستخدم - تحاذي جهة اليسار (لأن الاتجاه RTL، "بداية" الكلام
+   عادة يمين، فنخلي رسائل المستخدم يسار عشان تتميز بصرياً عن الرد) */
+.user-bubble {
+  align-self: flex-start;
+  background-color: var(--color-leaf);
+  color: var(--color-white);
+  border-bottom-left-radius: 4px;
+}
+
+/* فقاعة رد الذكاء الاصطناعي */
+.bot-bubble {
+  align-self: flex-end;
+  background-color: var(--color-bg);
+  color: var(--color-ink);
+  border: 1px solid rgba(63, 92, 46, 0.15);
+  border-bottom-right-radius: 4px;
+}
+
+/* نموذج إرسال الرسالة (صندوق الكتابة + زر الإرسال) */
+.chat-form {
+  display: flex;
+  gap: 10px;
+}
+
+.chat-input {
+  flex: 1;
+  padding: 14px 18px;
+  border-radius: 30px; /* شكل دائري كامل - مألوف بتطبيقات المحادثة */
+  border: 1px solid rgba(35, 42, 29, 0.2);
+  font-family: var(--font-body);
+  font-size: 15px;
+  background-color: var(--color-white);
+}
+
+.chat-input:focus {
+  outline: none;
+  border-color: var(--color-leaf-light);
+}
+
+.chat-send-btn {
+  border-radius: 30px;
+  padding: 14px 28px;
+}
+
+/* ==========================================================================
+   16) الصفحات الثابتة (about.html, terms.html)
+   ========================================================================== */
+.static-page {
+  max-width: 750px;
+  margin: 0 auto;
+  padding: 60px 20px;
+}
+
+.static-content {
+  background-color: var(--color-white);
+  border-radius: var(--radius-md);
+  padding: 36px;
+  box-shadow: var(--shadow-soft);
+}
+
+.static-content h3 {
+  font-size: 19px;
+  margin-top: 26px;
+  margin-bottom: 10px;
+}
+
+.static-content h3:first-child {
+  margin-top: 0;
+}
+
+.static-content p {
+  margin-bottom: 14px;
+  opacity: 0.9;
+}
+
+.project-note {
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px dashed rgba(35, 42, 29, 0.2);
+  font-size: 14px;
+  opacity: 0.7;
+  text-align: center;
+}
+
+/* بطاقة معلومات المطوّر */
+.developer-card {
+  margin-top: 30px;
+  padding-top: 26px;
+  border-top: 2px solid var(--color-bg);
+  text-align: center;
+}
+
+.developer-name {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--color-leaf);
+  margin-bottom: 4px;
+}
+
+.developer-detail {
+  font-size: 14px;
+  opacity: 0.8;
+  margin-bottom: 2px;
+}
+
+.contact-title {
+  font-size: 16px;
+  margin-top: 20px;
+  margin-bottom: 12px;
+}
+
+.contact-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+}
+
+.contact-list li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.contact-icon {
+  font-size: 16px;
+}
+
+.contact-list a {
+  color: var(--color-gold);
+  font-weight: 700;
+}
+
+.contact-list a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: column;
+    gap: 14px;
+    padding: 16px 20px;
+  }
+
+  .navbar ul {
+    gap: 18px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .hero {
+    flex-direction: column;
+    padding: 40px 20px;
+    text-align: center;
+  }
+
+  .hero-text h1 {
+    font-size: 30px;
+  }
+
+  .hero-text p {
+    margin-right: auto;
+    margin-left: auto;
+  }
+
+  .hero-buttons {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+}

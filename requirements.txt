@@ -1,9 +1,27 @@
-lightgbm.basic.LightGBMError: scikit-learn is required for lightgbm.sklearn. You must install scikit-learn and restart your session to use this module.
+# ملف requirements.txt
+# فيه كل المكتبات اللي يحتاجها المشروع عشان يشتغل
+# لتثبيتهم كلهم دفعة وحدة، تكتب بالـ Terminal: pip install -r requirements.txt
+# هذا مفيد جداً لو غيّرت جهاز أو رفعت المشروع لسيرفر - ما تحتاج تثبت كل مكتبة يدوياً
 
-File "C:\Users\omran_n\Documents\عبدالرزاق\myelector\app_v2-1.py", line 197, in <module>
-    model_elec = lgb.LGBMRegressor(n_estimators=50, max_depth=3, min_child_samples=1, verbose=-1)  # إنشاء نموذج LightGBM للكهرباء
-                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-File "C:\Users\omran_n\AppData\Local\Programs\Python\Python311\Lib\site-packages\lightgbm\sklearn.py", line 1343, in __init__
-    super().__init__(
-File "C:\Users\omran_n\AppData\Local\Programs\Python\Python311\Lib\site-packages\lightgbm\sklearn.py", line 632, in __init__
-    raise LightGBMError(
+Flask==3.0.3
+Flask-SQLAlchemy==3.1.1
+
+# requests: نستخدمها لإرسال طلبات HTTP لـ Gemini API
+requests==2.32.3
+
+# python-dotenv: تقرأ ملف .env وتحمّل المفاتيح السرية كمتغيرات بيئة
+python-dotenv==1.0.1
+
+# gunicorn: سيرفر إنتاجي حقيقي (Production Server) يستخدمه Render لتشغيل
+# الموقع - سيرفر Flask المدمج (app.run) مخصص للتطوير المحلي فقط، مو للنشر
+gunicorn==23.0.0
+
+
+# ==============================================================================
+# المكتبات التالية مطلوبة لتشغيل الموديل الحقيقي (model/model_utils.py)
+# ==============================================================================
+tensorflow==2.17.0
+numpy==1.26.4
+Pillow==10.4.0
+
+
